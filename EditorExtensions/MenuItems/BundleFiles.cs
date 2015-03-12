@@ -67,9 +67,15 @@ namespace MadsKristensen.EditorExtensions
             {
                 foreach (Project project in EditorExtensionsPackage.DTE.Solution.Projects)
                 {
-                    if (project.ProjectItems.Count > 1)
+                    foreach (ProjectItem pi in project.ProjectItems)
                     {
-                        UpdateBundle(project.ProjectItems.Item(project.ProjectItems.Count).FileNames[1], isBuild);
+                        // Some project item files names produce null project directories, try to find one that doesn't
+                        string dir = ProjectHelpers.GetProjectFolder(pi.FileNames[1]);
+                        if (!string.IsNullOrEmpty(dir))
+                        {
+                            UpdateBundle(pi.FileNames[1], isBuild);
+                            break;
+                        }
                     }
                 }
             }
